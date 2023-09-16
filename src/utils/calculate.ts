@@ -19,6 +19,6 @@ export const cutNumberByDigit = (number: number, digit = 4) => {
  * @param bigInt
  * @returns value in 'number' type
  */
-export const bigIntToNumber = (bigInt: string) => {
+export const bigIntToNumber = (bigInt: any) => {
   return new BigNumber(bigInt).toNumber();
 };

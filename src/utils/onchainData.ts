@@ -13,7 +13,7 @@ export const getBalance = async (address: string) => {
   const publicClient = usePublicClient();
   const nativeCurrency = publicClient.chain.nativeCurrency;
   // @ts-ignore
-  let balance = await publicClient.getBalance({ address });
+  let balance: bigint | number = await publicClient.getBalance({ address });
   balance = cutNumberByDigit(
     bigIntToNumber(balance) / 10 ** nativeCurrency?.decimals,
     nativeCurrency?.decimals

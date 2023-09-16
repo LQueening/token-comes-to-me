@@ -114,7 +114,7 @@ const Header = () => {
     // not null & bigger than 0 validation
     for (let key of Object.keys(submitInfo)) {
       const value = submitInfo[key as "targetAddress" | "amount" | "nonce"];
-      if (!value || (Number.isFinite(value) && value <= 0)) {
+      if (!value || (Number.isFinite(value) && (value as number) <= 0)) {
         commonToast(`${key} is not valid`);
         updateKeyStatus(key, true);
         throw new Error(
@@ -126,12 +126,14 @@ const Header = () => {
       // if the key is 'amount', check token balance
       if (key === "amount") {
         // @ts-ignore
-        let balance = await publicClient.getBalance({ address });
+        let balance: bigint | number = await publicClient.getBalance({
+          address: address as `0x${string}`,
+        });
         balance = cutNumberByDigit(
           bigIntToNumber(balance) / 10 ** nativeCurrency?.decimals,
           nativeCurrency?.decimals
         );
-        if (balance < value) {
+        if (balance < (value as number)) {
           commonToast(
             `You only have ${balance} ${nativeCurrency?.symbol} in wallet.`
           );
@@ -144,7 +146,7 @@ const Header = () => {
         }
       }
       // make sure the nonce is bigger than current nonce
-      if (key === "nonce" && value < latestNonce) {
+      if (key === "nonce" && (value as number) < latestNonce) {
         commonToast(`Nonce can't less than ${latestNonce}`);
         updateKeyStatus(key, true);
         throw new Error(
