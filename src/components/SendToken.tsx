@@ -249,7 +249,7 @@ const Header = () => {
         </Box>
       </FormControl>
       {/* target network */}
-      <FormControl padding="4" isInvalid={errorMap.nonce}>
+      <FormControl padding="4">
         <FormLabel>Target network</FormLabel>
         <Select
           placeholder="Select network"
