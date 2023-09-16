@@ -9,6 +9,19 @@ body {
   padding: 0;
 }
 
+/* override input style */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* hide scroll bar */
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+}
+
 /* rotate animation for taro log */
 @keyframes rotate {
   0% {

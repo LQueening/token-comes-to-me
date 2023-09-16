@@ -1,10 +1,31 @@
-import { useState } from "react";
-import "./App.css";
+import { useConnect } from "wagmi";
+import { Container } from "@chakra-ui/react";
 
 const Header = () => {
-  const [count, setCount] = useState(0);
+  const { connect, connectors, error, isLoading, pendingConnector } =
+    useConnect();
 
-  return <div className="App">123456</div>;
+  return (
+    <Container h="80px">
+      <div>
+        {connectors.map((connector) => (
+          <button
+            disabled={!connector.ready}
+            key={connector.id}
+            onClick={() => connect({ connector })}
+          >
+            {connector.name}
+            {!connector.ready && " (unsupported)"}
+            {isLoading &&
+              connector.id === pendingConnector?.id &&
+              " (connecting)"}
+          </button>
+        ))}
+
+        {error && <div>{error.message}</div>}
+      </div>
+    </Container>
+  );
 };
 
 export default Header;
