@@ -1,20 +1,19 @@
 import { useConnect, useAccount } from "wagmi";
 import { Container, Image, Box } from "@chakra-ui/react";
+import SendToken from "./SendToken";
 import taroBg from "../assets/taro-bg.png";
 import taroLogo from "../assets/taro-logo.png";
 
 const Content = () => {
   const { address } = useAccount();
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect();
-
-  console.log(address);
+  const { connect, connectors } = useConnect();
 
   return (
     // Container box, limit the Dapp size
     <Container
       position="absolute"
       padding="0"
+      overflow="auto"
       left={{ base: "0", md: "50%" }}
       top={{ base: "0", md: "10%" }}
       transform={{
@@ -57,6 +56,8 @@ const Content = () => {
           </Box>
         </Box>
       )}
+      {/* Show token sending part when the wallet is connected */}
+      {address && <SendToken></SendToken>}
     </Container>
   );
 };
