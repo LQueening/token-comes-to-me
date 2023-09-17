@@ -115,7 +115,7 @@ const Header = () => {
     // not null & bigger than 0 validation
     for (let key of Object.keys(submitInfo)) {
       const value = submitInfo[key as "targetAddress" | "amount" | "nonce"];
-      if (!value || (Number.isFinite(value) && (value as number) <= 0)) {
+      if (!value || (Number.isFinite(value) && (value as number) < 0)) {
         errorHandler({
           message: `${key} is not valid`,
           key,
