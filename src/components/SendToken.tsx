@@ -135,7 +135,7 @@ const Header = () => {
         );
         if (balance < (value as number)) {
           commonToast(
-            `You only have ${balance} ${nativeCurrency?.symbol} in wallet.`
+            `You don't have enough ${nativeCurrency?.symbol} to send.`
           );
           updateKeyStatus(key, true);
           throw new Error(
