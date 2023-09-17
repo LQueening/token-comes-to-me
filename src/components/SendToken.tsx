@@ -26,6 +26,7 @@ import {
 } from "@chakra-ui/react";
 import * as chain from "wagmi/chains";
 import { cutNumberByDigit, bigIntToNumber } from "../utils/calculate";
+import { isValidEthereumAddress } from "../utils/valid";
 import taroHand from "../assets/taro-hand.jpg";
 
 const supportChains = [
@@ -115,13 +116,19 @@ const Header = () => {
     for (let key of Object.keys(submitInfo)) {
       const value = submitInfo[key as "targetAddress" | "amount" | "nonce"];
       if (!value || (Number.isFinite(value) && (value as number) <= 0)) {
-        commonToast(`${key} is not valid`);
-        updateKeyStatus(key, true);
-        throw new Error(
-          JSON.stringify({
-            errorKey: key,
-          })
-        );
+        errorHandler({
+          message: `${key} is not valid`,
+          key,
+        });
+      }
+      // if the key is 'targetAddress', check if is valid addrss
+      if (key === "targetAddress") {
+        if (!isValidEthereumAddress(value as string)) {
+          errorHandler({
+            message: `Target address is not a valid address`,
+            key,
+          });
+        }
       }
       // if the key is 'amount', check token balance
       if (key === "amount") {
@@ -134,29 +141,32 @@ const Header = () => {
           nativeCurrency?.decimals
         );
         if (balance < (value as number)) {
-          commonToast(
-            `You don't have enough ${nativeCurrency?.symbol} to send.`
-          );
-          updateKeyStatus(key, true);
-          throw new Error(
-            JSON.stringify({
-              errorKey: key,
-            })
-          );
+          errorHandler({
+            message: `You don't have enough ${nativeCurrency?.symbol} to send.`,
+            key,
+          });
         }
       }
       // make sure the nonce is bigger than current nonce
       if (key === "nonce" && (value as number) < latestNonce) {
-        commonToast(`Nonce can't less than ${latestNonce}`);
-        updateKeyStatus(key, true);
-        throw new Error(
-          JSON.stringify({
-            errorKey: key,
-          })
-        );
+        errorHandler({
+          message: `Nonce can't less than ${latestNonce}`,
+          key,
+        });
       }
     }
     return true;
+  };
+
+  // valid error handler
+  const errorHandler = ({ message, key }: { message: string; key: string }) => {
+    commonToast(message);
+    updateKeyStatus(key, true);
+    throw new Error(
+      JSON.stringify({
+        errorKey: key,
+      })
+    );
   };
 
   // submit transaction
@@ -231,7 +241,7 @@ const Header = () => {
 
   return (
     <Box>
-      <Image w="100%" draggable={false} src={taroHand}></Image>
+      <Image w="60%" margin="0 auto" draggable={false} src={taroHand}></Image>
       {/* target address */}
       <FormControl padding="4" isInvalid={errorMap.targetAddress}>
         <Box>
@@ -309,7 +319,7 @@ const Header = () => {
         display="block"
         margin="0 auto"
         mt="8"
-        mb="8"
+        mb="2"
         colorScheme="blue"
         isLoading={isButtonLoading || isSwitchChainLoading}
         onClick={handleSubmitTransaction}
